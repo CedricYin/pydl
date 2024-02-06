@@ -5,14 +5,18 @@ from src.autodiff import *
 import numpy as np
 
 def test_backward():
-    x = Variable(np.array(0.5))
+    """利用数值微分进行梯度检验"""
+    x = Variable(np.random.rand(1))  # 0~1随机输入
+
+    def f(x):
+        return square(exp(square(x)))
 
     # 反向传播前需要先进行前向传播
-    a = square(x)
-    b = exp(a)
-    y = square(b)
+    y = f(x)
 
     # 反向传播
     y.backward()
 
-    assert x.grad == 3.297442541400256
+    # 梯度检验
+    x_grad = numerical_dirr(f, x)
+    assert np.allclose(x.grad, x_grad, rtol=1e-05, atol=1e-08)  # 若x.grad和x_grad相近，返回True

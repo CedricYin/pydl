@@ -111,15 +111,4 @@ def numerical_dirr(f, x, eps=1e-4):
     return (y1.data - y0.data) / (2 * eps)
 
 
-def demo_f(x):
-    """复合函数示例: y = (e^(x^2))^2"""
-    A = Square()
-    B = Exp()
-    C = Square()
-    return C(B(A(x)))
-
-
-if __name__ == "__main__":
-    x = np.array(2)
-    print(x ** 2)
-    print(type(x ** 2))
+# if __name__ == "__main__":
