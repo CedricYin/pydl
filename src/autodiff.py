@@ -7,6 +7,18 @@ class Variable:
     """变量类，对实际数据进行封装"""
     def __init__(self, data):
         self.data = data
+        self.grad = None
+        self.creator = None  # 创造该变量的函数
+    
+    def set_creator(self, func):
+        self.creator = func
+    
+    def backward(self):
+        f = self.creator
+        if f is not None:
+            x = f.input
+            x.grad = f.backward(self.grad)
+            x.backward()  # 递归地反向传播到最左边的参数（最左边的参数的creator为None
 
 
 class Function:
@@ -15,9 +27,18 @@ class Function:
         x = input.data
         y = self.forward(x)
         output = Variable(y)
+        output.set_creator(self)  # define-by-run, 在计算之间建立连接
+        # 保存中间数据
+        self.input = input  # 保存输入变量（反向传播所需要的中间值，这里是输入）
+        self.output = output  # 保存输出变量（反向传播所需要的中间值，这里是输出）
         return output
     
     def forward(self, x):
+        """根据计算图，前向传播计算"""
+        raise NotImplementedError
+    
+    def backward(self, gy):
+        """根据计算图，并基于链式法则，反向传播求导"""
         raise NotImplementedError
 
 
@@ -26,11 +47,21 @@ class Square(Function):
     def forward(self, x):
         return x ** 2
 
+    def backward(self, gy):
+        x = self.input.data
+        gx = 2 * x * gy
+        return gx
+    
 
 class Exp(Function):
     """计算exp"""
     def forward(self, x):
         return np.exp(x)
+    
+    def backward(self, gy):
+        x = self.input.data
+        gx = np.exp(x) * gy
+        return gx
 
 
 def numerical_dirr(f, x, eps=1e-4):
