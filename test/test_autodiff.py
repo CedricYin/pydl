@@ -1,5 +1,7 @@
-# 如果要运行该文件（不使用pytest），
-# 需要先export PYTHONPATH=${PYTHONPATH}:/path/to/pydl，避免src模块找不到。
+"""对反向传播的自动微分进行单元测试"""
+
+import sys
+sys.path.append("repo/pydl")
 
 from src.autodiff import *
 import numpy as np

@@ -1,5 +1,8 @@
 """对算子进行单元测试"""
 
+import sys
+sys.path.append("../..")
+
 from src.autodiff import *
 import numpy as np
 
